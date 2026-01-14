@@ -1,0 +1,605 @@
+{
+  "name": "Vanessa",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -32
+      ],
+      "id": "f33cb33c-30f7-47fe-bc42-813823cfba4c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61c73c00-ceb5-4c6b-8780-3eaefca6377f",
+              "name": "Assistant ID",
+              "value": "1356fbcf-1885-44a3-afef-29a1852af68b",
+              "type": "string"
+            },
+            {
+              "id": "c6aeaabc-ae57-48fd-9a01-b56db7738eea",
+              "name": "Phone number ID",
+              "value": "7a54925c-80fd-4c72-bf87-4c19ffa1246b",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "71ec0433-bf0b-46d5-8f81-3efd8deea923",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -32
+      ],
+      "id": "03fd172c-101a-4d3e-b858-5b9ab15fa4c6",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        -32
+      ],
+      "id": "3bb521dd-f5a4-4e9a-8e9a-1af2019c2945",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        256
+      ],
+      "id": "27fc6c64-8fe1-4719-98a7-add98a1b9be4",
+      "name": "Get Call Summary",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fdcXIEIPrFRjrVep",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=1BJgsKdeoqckvwtqWWesMqzyuzwKZSrOShh-cc8rg5u0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BJgsKdeoqckvwtqWWesMqzyuzwKZSrOShh-cc8rg5u0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Lead Status",
+              "lookupValue": "Not Connected"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        -32
+      ],
+      "id": "f9746718-12a2-416b-a4f9-d712586251fa",
+      "name": "Lead List",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xs9IAKrjJWPPwgTd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/assistant/{{ $('Edit Fields').item.json['Assistant ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        -32
+      ],
+      "id": "e7399ef0-eeb9-421e-b21a-eebd0c13d7e8",
+      "name": "Get Agent",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fdcXIEIPrFRjrVep",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vapi.ai/call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phoneNumberId\": \"{{ $('Edit Fields').item.json['Phone number ID'] }}\",\n  \"assistantId\": \"{{ $('Edit Fields').item.json['Assistant ID'] }}\",\n  \"customer\": {\n    \"number\": \"+1{{ $('Lead List').item.json['Phone number'] }}\"\n  },\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"name\": \"{{ $json.name }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -224,
+        256
+      ],
+      "id": "2e93d8a2-4011-4912-888d-b0ce1bdb2fb1",
+      "name": "Make call",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fdcXIEIPrFRjrVep",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0edea0e0-428e-4d1f-bd5b-69db075ac059",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        256
+      ],
+      "id": "4bf772f4-f912-46b0-a001-e74e8b5ad8ac",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        272
+      ],
+      "id": "6dfe36d2-10d4-4db1-a8ef-f0bd3751c46a",
+      "name": "Wait",
+      "webhookId": "dfbc02cc-ca45-4fda-a80c-11b9ae5ac93e"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a call-analysis assistant for Oblique AI.  \nYour task is to analyze real-estate acquisition call transcripts handled by our voice agent “Vanessa.”  \nProduce a structured summary for our acquisitions team to review lead quality and seller intent.\n\nInstructions:\n\n1. Read the provided call transcript carefully.  \n2. Write a concise 3–4 line summary describing:\n   - Whether the homeowner is open to selling\n   - Key details mentioned (asking price, timeline, property condition)\n   - Any objections or follow-up needs\n3. Classify the call outcome into one of these Lead Conditions:\n   - Qualified Seller\n   - Call Back Later\n   - Not Interested\n   - DNC / Removal Requested\n   - Not Connected\n4. Format your response strictly as JSON with the structure below.\n\nRequired JSON Format:\n\n{\n  \"call_summary\": {\n    \"summary\": \"3–4 line summary of the conversation\",\n    \"lead_status\": \"One of the five Lead Conditions above\",\n    \"key_details\": {\n      \"Time\": \"<ISO timestamp or empty>\",\n      \"asking_price_range\": \"string or null\",\n      \"Owner Status\": \"<Owner | Co-Owner | Tenant/Relative | Unknown>\",\n      \"timeline\": \"string or null\",\n      \"condition\": \"string or null\",\n      \"callback_time\": \"string or null\",\n      \n    }\n  }\n}\n\nCategory Definitions:\n- Qualified Seller: Homeowner clearly shows intent to sell, discusses price/timeline/condition, or agrees to transfer to acquisitions lead.  \n- Call Back Later: Homeowner is open to selling but asks to be contacted later or needs more time to decide.  \n- Not Interested: Homeowner explicitly declines or states they are not considering selling.  \n- DNC / Removal Requested: Caller requests not to be contacted again; must be removed from future outreach.  \n- Not Connected: No meaningful conversation occurred (no answer, wrong number, voicemail, or silence).\n\nIf no transcript text is available, return:\n{\n  \"call_summary\": {\n    \"summary\": \"No transcript provided\",\n    \"category\": \"Not Connected\",\n    \"key_details\": {}\n  }\n}\n\nPlease analyze the following call transcript:\n{{$json.transcript}}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        176,
+        544
+      ],
+      "id": "74f0787b-eafc-4167-b3f4-9eb03396b78e",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7HXwnCQ04PahTcDV",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BJgsKdeoqckvwtqWWesMqzyuzwKZSrOShh-cc8rg5u0",
+          "mode": "list",
+          "cachedResultName": "Lead List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BJgsKdeoqckvwtqWWesMqzyuzwKZSrOShh-cc8rg5u0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BJgsKdeoqckvwtqWWesMqzyuzwKZSrOShh-cc8rg5u0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "={{ $('Loop Over Items').item.json['Phone number'] }}",
+            "Call Summary": "={{ $json.message.content.call_summary.summary }}",
+            "Time": "={{\n  new Date()\n    .toLocaleString('en-US', {\n      timeZone: 'America/Chicago',\n      month: '2-digit',\n      day: '2-digit',\n      year: 'numeric',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    })\n    .replace(/\\//g, '-')\n    .replace(',', '')\n}}\n",
+            "Recording Url": "={{ $('Get Call Summary').item.json.recordingUrl }}",
+            "Condition": "={{ $json.message.content.call_summary.key_details.condition }}",
+            "Timing": "={{ $json.message.content.call_summary.key_details.timeline }}",
+            "Price Range": "={{ $json.message.content.call_summary.key_details.asking_price_range }}",
+            "Call Back Time": "={{ $json.message.content.call_summary.key_details.callback_time }}",
+            "Lead Status": "={{ $json.message.content.call_summary.lead_status }}",
+            "Owner Status": "={{ $json.message.content.call_summary.key_details['Owner Status'] }}"
+          },
+          "matchingColumns": [
+            "Phone number"
+          ],
+          "schema": [
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Owner Name",
+              "displayName": "Owner Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Property Address",
+              "displayName": "Property Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Status",
+              "displayName": "Lead Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Owner Status",
+              "displayName": "Owner Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Call Back Time",
+              "displayName": "Call Back Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price Range",
+              "displayName": "Price Range",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timing",
+              "displayName": "Timing",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Condition",
+              "displayName": "Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Call Summary",
+              "displayName": "Call Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recording Url",
+              "displayName": "Recording Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        544
+      ],
+      "id": "f64930fc-71f3-47fa-8ad6-35f9fde2458e",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xs9IAKrjJWPPwgTd",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Lead List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Make call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead List": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Agent": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make call": {
+      "main": [
+        [
+          {
+            "node": "Get Call Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Call Summary": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Call Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "080183a6-3312-4b60-ab33-463ba385e5af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b0f89f83bdea4040ed776479c7e3545b06da8f542018497163face85eeca3be"
+  },
+  "id": "6hE1V55EjDKxCKMy",
+  "tags": []
+}
