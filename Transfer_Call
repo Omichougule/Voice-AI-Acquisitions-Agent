@@ -1,0 +1,32 @@
+{
+  "id": "2b3cd213-2ca4-4c14-b1c1-c4e973afb502",
+  "createdAt": "2025-10-12T03:24:36.753Z",
+  "updatedAt": "2025-10-12T04:07:57.576Z",
+  "type": "transferCall",
+  "function": {
+    "name": "transfer_call",
+    "description": "Use this tool to transfer to the acquisitions lead."
+  },
+  "messages": [
+    {
+      "type": "request-start",
+      "blocking": false
+    }
+  ],
+  "orgId": "70bf2e2f-10f5-4b32-b38d-85189c9a7193",
+  "destinations": [
+    {
+      "type": "number",
+      "number": "+14108447362",
+      "message": "Please wait a moment while I transfer the call to the acquisitions lead.",
+      "callerId": "Executive",
+      "description": "When the user wants to talk to the acquisitions lead.",
+      "transferPlan": {
+        "mode": "blind-transfer",
+        "sipVerb": "refer"
+      },
+      "numberE164CheckEnabled": true
+    }
+  ]
+}
+
