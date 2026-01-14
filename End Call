@@ -1,0 +1,23 @@
+{
+  "id": "07c354dd-9300-48ce-8acd-dec847c65e81",
+  "createdAt": "2025-10-12T18:59:24.010Z",
+  "updatedAt": "2025-10-12T20:02:00.805Z",
+  "type": "endCall",
+  "function": {
+    "name": "end_call",
+    "description": "When the end_call tool is invoked:\n\n1. Let the customer know: \"I'll end the call now. Thank you!\" or similar\n2. End the call gracefully\n3. Use this tool when:\n  - Customer is not interested and wants removal\n  - Customer is busy, provides no callback time, and declines removal\n  - No response after 10+ seconds total",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  "messages": [
+    {
+      "type": "request-start",
+      "blocking": false
+    }
+  ],
+  "orgId": "70bf2e2f-10f5-4b32-b38d-85189c9a7193"
+}
+
