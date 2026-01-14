@@ -9,6 +9,11 @@
    The system focuses on natural multi-turn conversations, fast lead qualification, and 
    automated CRM updates — all within short, controlled call durations.
 
+   Some Conversation Examples:
+   https://storage.vapi.ai/0199da1a-a246-7555-8b24-6d1306ae11de-1760300889547-b3dc1413-9450-452c-be08-251831bb451a-mono.wav
+   https://storage.vapi.ai/0199da1e-24ca-766c-82b6-9f613f1b7fbb-1760301086730-e217b630-14ac-4e8e-9ecd-b3a4bcc80ac2-mono.wav
+   https://storage.vapi.ai/0199da21-b2db-7dd9-824a-dda2ec77a0a3-1760301301251-a7f9be83-a1bb-42cf-85b6-ac9df679e01d-mono.wav
+
 ✨ Features
 
 - Automated outbound calls to homeowners
